@@ -4,6 +4,16 @@ const petsRouter = require("./routes/pets");
 
 const app = express();
 
+
+function middlewareLogMonitor(req, res, next) {
+  const timestamp = new Date().toISOString();
+  console.log(`::::::::::[${timestamp}] ${req.method} ${req.url}`);
+  //* log timestamp + method + url 
+  next();
+}
+
+
+//* MIDLEWARE -> funciones que se ejecutan en el medio del request y response, antes de llegar a la ruta
 // Configurar Express para manejar datos de formularios
 app.use(express.urlencoded({ extended: true })); // -> FORM - DATA
 app.use(express.json()); // -> navegador data por body -> Server {data} <- req.body
@@ -12,8 +22,9 @@ console.log("---------->", paths.public);
 // Servir archivos estáticos desde la carpeta "public"
 //*   Donde los exponemos -> /public  -  y los trae de:
 //*                                 ----------> C:\Users\...\CLASE_25-11-03\STATIC-PUBLIC\api\public
+//* Se sirve en el cliente en /public -> http://localhost:3000/public/
 app.use("/public", express.static(paths.public)) //* OK 'STATIC CONFIG'
-
+app.use(middlewareLogMonitor); //* Middleware de monitoreo de logs
 
 // Usar el router de pets
 app.use("/api/pets", petsRouter);

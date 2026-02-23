@@ -1,12 +1,14 @@
 const express = require("express");
 const app = express();
 
+//* 1. Instalamos handlebars: npm i express-handlebars
+//* 2. Requerimos handlebars
 const handlebars = require("express-handlebars");
 const { paths } = require("./config/config");
 
 // console.log("File path:", paths.public);
 
-//* SETEO handlebars - método .engine para configurar el motor de plantillas
+//* 3. SETEO handlebars - método .engine para configurar el motor de plantillas
 app.engine(
   "hbs",
   handlebars.engine({
@@ -20,13 +22,19 @@ app.engine(
 app.set("view engine", "hbs");
 app.set("views", paths.views);
 
+//* 4. Crear dentro de src la carpeta 'views' 
+//* 5. Dentro de 'views' crear la carpeta 'layouts' y dentro el archivo 'main.hbs' que va a ser nuestro layout principal
+//* 6. El 'main.hbs' va a tener la estructura HTML de nuestra aplicación 
+//* y un {{{body}}} donde se van a renderizar las vistas
+//* 7. Iniciamos a crear nuestras vistas .hbs y nuestras rutas que van a renderizar esas vistas
+
 //* Middelwares
 app.use(express.json());
 app.use(express.urlencoded({ extended: false })); // DATA FORM {} {...}
 
 //* Static
 //* Todos nuestros archivos ESTATICOS (html, css, img, etc)
-// que se encuentran en la carpeta 'public' sen van a servir en /static
+// que se encuentran en la carpeta 'public' sen van a servir en /public
 app.use("/public", express.static(paths.public));
 
 app.get("/", (req, res) => {
@@ -35,7 +43,11 @@ app.get("/", (req, res) => {
   //* Para renderizar una vista con handlebars usamos res.render 
   //* indicamos la ruta de la vista a renderizar y le pasamos como 
   //* segundo argumento un objeto con los datos
-  return res.render("pages/home", {edad: 30, active: false});
+  const context = {
+    edad: 30,
+    active: true,
+  };
+  return res.render("pages/home", context);
   /*
   home.hbs::::::
   <div>
@@ -98,12 +110,12 @@ app.get("/", (req, res) => {
 */
 
 app.get("/user", (req, res) => {
-  const { nombre } = req.query;
-  // const context = {
-  //   nombre,
-  //   id,
-  // };
-  return res.render("pages/user", {nombre});
+  const { nombre, id } = req.query;
+  const context = {
+    nombre,
+    id,
+  };
+  return res.render("pages/user", context);
   // let isValidate = id === "1234";
   // if (isValidate) return res.render("pages/user", context);
   // else return res.render("pages/not_found_user", context);
@@ -163,6 +175,14 @@ const products = [
 app.get("/products", (req, res) => {
   const context = {
     products,
+    pepes:[{id: 1, title: "Pepe 1", price: 100, stock: 32 },
+    {id: 2, title: "Pepe 2", price: 200 },
+    {id: 3, title: "Pepe 3", price: 300 }],
+    dni: 999999999,
+    data: {
+      name: "Mauricio",
+      age: 30,
+    }
   };
   return res.render("pages/products", context);
 });

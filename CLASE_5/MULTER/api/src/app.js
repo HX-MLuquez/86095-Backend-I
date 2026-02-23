@@ -5,11 +5,14 @@ const { paths } = require("./config/environment");
 const logger = require("morgan");
 const fs = require("fs").promises;
 
+//* 1. npm i multer
+//* 2. Requerir multer (importar multer)
 const multer = require("multer");
 
 //* Config Multer
 // const upload = multer({ dest: "uploads/" }); // config simple por defecto
 
+//* 3. Crear (configurar) el storage de multer para personalizar la ruta y el nombre del archivo
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
@@ -22,6 +25,8 @@ const storage = multer.diskStorage({
     cb(null, originalName);
   },
 });
+
+//* 4. Armar el upload (futuro Middleware) con la configuración del storage
 const upload = multer({ storage: storage });
 
 /*
@@ -60,10 +65,14 @@ app.get("/",  miMiddelware,  (req, res) => {
 
 //* -> http://localhost:8080/upload/single/123 - form-data key='image'
 
+//* 5. Implementar el Middleware 'upload' creado en la ruta que se encargará de subir la imagen
 app.post("/upload/single/:id", upload.single("image"), async (req, res) => {
   try {
     console.log("---> ", req.file); //* en File está la data de la img
     // res.send(`imagen del Usuario guardada ${req.file.originalname}`)
+    if(!req.file) {
+      return res.status(400).send("No se ha subido ninguna imagen");
+    }
     //* Mostramos la imagen en el navegador que su filename la dejamos en el query
     res.send(`
       <!DOCTYPE html>
@@ -106,9 +115,21 @@ app.post("/upload/single/:id", upload.single("image"), async (req, res) => {
       </html>
     `);
   } catch (error) {
-    res.send(`imagen ERROR ${error}`);
+    res.status(500).send(`imagen ERROR ${error}`);
   }
 });
+
+
+
+
+//* volvemos a las 9:02!
+
+
+
+
+
+
+
 
 //* Route para agregar hasta 4 imagenes | Desde el Client se deben de seleccionar las 4 imgs juntas
 //* -> http://localhost:8080/upload/multiple/123 - form-data key='images'
@@ -118,9 +139,9 @@ app.post(
   async (req, res) => {
     try {
       console.log("---> ", req.files); //* en File está la data de la img
-      res.send(`imagenes del Usuario guardadas ${req.files.length}`);
+      res.status(200).send(`imagenes del Usuario guardadas ${req.files.length}`);
     } catch (error) {
-      res.send(`imagenes ERROR ${error}`);
+      res.status(500).send(`imagenes ERROR ${error}`);
     }
   }
 );
