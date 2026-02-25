@@ -21,8 +21,17 @@ app.engine(
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "views"));
 
+//! Prolema - estaba devolviendo un texto plano, no un html renderizado, y al
+//! No renderizar la vista, no inyectaba ni el script de socket.io (<script src="/socket.io/socket.io.js"></script>) 
+//! ni el script del .js (public/js/socket-client.js) 
+
+//! app.get("/", (req, res) => {
+//   res.send("Hello World!");
+// });
+
+//* Renderizamos la vista home.hbs
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.render("pages/home"); 
 });
 
 //* 3. Crear el server
