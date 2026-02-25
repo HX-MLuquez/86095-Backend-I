@@ -1,6 +1,6 @@
 # Programación Backend I: Desarrollo Avanzado de Backend - Carreras Intensivas
 
-* Comisión 86095 - Lunes y Miércoles de 07:30 a 10:00 hs
+- Comisión 86095 - Lunes y Miércoles de 07:30 a 10:00 hs
 
 ## Presentación
 
@@ -79,7 +79,8 @@ api/
 
 ---
 
-* Ejemplo de flujo de una petición GET a la ruta /api/users para obtener todos los usuarios:
+- Ejemplo de flujo de una petición GET a la ruta /api/users para obtener todos los usuarios:
+
 ```bash
 FLOW
 
@@ -109,3 +110,14 @@ class UserService {
 - MongoDB - cloud
 
 ```
+
+---
+
+
+Buenas, cómo están?
+ya estamos en clase Programación Backend I: Desarrollo Avanzado de Backend - comisión 86095.
+Si no puden acceder a la clase desde la plataforma. Intenten abrir el navegador en modo incógnito, o prueben con otro navegador e ingresen con este link: https://coderhouse.zoom.us/j/91649549789
+
+Nos vemos!
+
+
