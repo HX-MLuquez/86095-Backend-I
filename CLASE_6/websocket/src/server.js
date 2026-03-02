@@ -42,6 +42,7 @@ const server = http.createServer(app);
 
 //* Lista de mensajes que se guardan en el servidor (simulando una base de datos)
 const messages = [];
+const users_connections = [];
 
 //* const messages = [{userConect}{message1}, {message2}, {message3}];
 
@@ -67,38 +68,54 @@ const io = new Server(server);
 io.on("connection", (socket) => {
   console.log(`Usuario ID: ${socket.id} Conectado!!!`);
 
-  // Nuestros EVENTOS de ESCUCHA
+  //* Evento cuando un usuario se conecta
   socket.on("userConnect", (data) => {
-    console.log("----> ", data); // {user:pepe, id: 12345}
-    let message = {
-      id: socket.id,
-      info: "connection",
+    console.log("----> ", data); // {user: pepe, id: 12345}
+    const connection = {
+      socketId: socket.id,
+      userId: data.id,
       name: data.user,
-      message: `usuario: ${data.user} - id: ${data.id} - Conectado`,
     };
-    messages.push(message);
-    io.emit("serverUserMessage", messages);
+
+    users_connections.push(connection);
+
+    io.emit("serverConnections", users_connections);
   });
 
-   socket.on("userMessage", (data) => {
+  //* Evento cuando un usuario envía un mensaje
+  socket.on("userMessage", (data) => {
     console.log("::::data:::::", data);
+
     const message = {
-      id: socket.id,
-      info: "message",
+      socketId: socket.id,
       name: data.user,
       message: data.message,
+      timestamp: new Date(),
     };
+
     messages.push(message);
-    io.emit("serverUserMessage", messages);
+
+    io.emit("serverMessages", messages);
   });
 
-  // NUESTRO EVENTO DE EMITIR
-
-  socket.on("disconnect", (data) => {
-    console.log("----> ", data); // transport close
+  //* Evento cuando un usuario se desconecta
+  socket.on("disconnect", () => {
     console.log("Cliente desconectado:", socket.id);
+
+    // Eliminar de la lista de conexiones
+    const index = users_connections.findIndex(
+      (conn) => conn.socketId === socket.id
+    );
+
+    if (index !== -1) {
+      users_connections.splice(index, 1);
+    }
+
+    io.emit("serverConnections", users_connections);
   });
 });
+
+
 //* Evento de desconexion
 
 module.exports = server;

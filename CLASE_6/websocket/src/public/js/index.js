@@ -3,44 +3,55 @@ console.log("IN CLIENT");
 
 const userName = document.querySelector(".userName");
 const chatMessage = document.querySelector(".chatMessage");
-var uuid = "";
+const usersContainer = document.querySelector(".usersContainer"); // contenedor para usuarios conectados
 
-//! ||======================================================||
-//  ||======================================================||
-//* ||  ||===========   ÁREA DE CÓDIGO   ===============||  ||
-//* ||  ||        💻  Escribe tu código aquí  💻       ||  ||
-//* ||  ||==================================================||
-//! ||======================================================||
+let uuid = "";
+let messages = [];
+let users_connections = [];
 
-//* Conexión con el servidor de Socket.IO
-// const socket = io("http://mi-server-aparte.com")
-const socket = io(); // -> por defecto se conecta al server donde se aloja http://localhost:8080
-// www.api-pepe.com
+const socket = io("http://localhost:8080");
 
-//* Función para actualizar los mensajes en el chat
-const updateMessagges = (newMessages) => {
+//* =========================
+//* Renderizar mensajes
+//* =========================
+const updateMessages = (newMessages) => {
   messages = [...newMessages];
+
   chatMessage.innerHTML = messages
     .map((message) => {
-      if (message.info === "connection") {
-        return `<p class="connection">${message.message}</p>`;
-      } else {
-        return `
+      return `
         <div class="messageUser">
           <h5>Nombre: ${message.name}</h5>
-          <p>ID - ${message.id}</p>
+          <p>SocketID: ${message.socketId}</p>
           <p>${message.message}</p>
+          <small>${new Date(message.timestamp).toLocaleTimeString()}</small>
         </div>
       `;
-      }
     })
     .join("");
 };
 
-//* EVENTOS DE EMITIR
+//* =========================
+//* Renderizar usuarios conectados
+//* =========================
+const updateConnections = (newConnections) => {
+  users_connections = [...newConnections];
 
-//* Formulario de entrada de usuario con SweetAlert2
-// Mostrar el formulario de entrada de usuario
+  usersContainer.innerHTML = users_connections
+    .map((user) => {
+      return `
+        <div class="connectedUser">
+          <p>${user.name}</p>
+          <small>ID: ${user.userId}</small>
+        </div>
+      `;
+    })
+    .join("");
+};
+
+//* =========================
+//* SweetAlert login
+//* =========================
 Swal.fire({
   title: "Ingrese su información",
   html: `
@@ -53,43 +64,53 @@ Swal.fire({
   preConfirm: () => {
     const name = Swal.getPopup().querySelector("#swal-input-name").value;
     const id = Swal.getPopup().querySelector("#swal-input-id").value;
+
     if (!name || !id) {
       Swal.showValidationMessage(`Por favor ingrese ambos campos`);
     }
-    return { name: name, id: id };
+
+    return { name, id };
   },
 }).then((result) => {
-  console.log("-->", result);
+  if (!result.isConfirmed) return;
+
   const { name, id } = result.value;
+
   uuid = id;
-  if (result.isConfirmed) {
-    userName.textContent = name;
-    socket.emit(`userConnect`, { user: name, id });
-  }
+  userName.textContent = name;
+
+  socket.emit("userConnect", { user: name, id });
 });
 
+//* =========================
 //* EVENTOS DE ESCUCHA
-//* Evento de conexión con el servidor
-socket.on("serverUserMessage", (data) => {
-  chatMessage.innerHTML = "";
-  updateMessagges(data);
+//* =========================
+socket.on("serverMessages", (data) => {
+  updateMessages(data);
 });
 
-//* Función para actualizar los mensajes en el chat
+socket.on("serverConnections", (data) => {
+  updateConnections(data);
+});
 
-//* Formulario de entrada de usuario con SweetAlert2
-// Mostrar el formulario de entrada de usuario
-
-//* Evento de conexión con el servidor
-
-//* Enlace de eventos de los botones de la interfaz - al DOM
+//* =========================
+//* Enviar mensaje
+//* =========================
 const btnMessage = document.getElementById("btnMessage");
 const inputMessage = document.getElementById("inputMessage");
-//* Función para enviar un mensaje al servidor
+
 btnMessage.addEventListener("click", (e) => {
   e.preventDefault();
-  const message = inputMessage.value;
-  socket.emit("userMessage", { message, user: userName.innerHTML });
+
+  const message = inputMessage.value.trim();
+  if (!message) return;
+
+  socket.emit("userMessage", {
+    message,
+    user: userName.textContent,
+  });
+
+  inputMessage.value = "";
 });
 
 //* Evento de conexión con el servidor
