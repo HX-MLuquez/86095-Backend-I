@@ -25,6 +25,19 @@ Tener una cuenta con una base de datos NoSQL en la nube.
 
 7. Para verificar que la instalación fue exitosa, abrir una terminal y ejecutar el comando `mongosh`. Si se abre la consola de MongoDB, la instalación fue exitosa.
 
+- Ver versión de MongoDB:
+
+```bash
+mongosh --version
+# o
+mongosh -v
+```
+
+- Conectamos
+```bash
+mongosh
+```
+
 8. Para cerrar la consola de MongoDB, ejecutar el comando `exit`.
 
 9. Para abrir MongoDB Compass, buscarlo en el menú de aplicaciones o ejecutar el comando `mongocompass`.
@@ -51,6 +64,12 @@ Paso a paso con windows:
 
 ## Comandos básicos de MongoDB
 
+* ver mis bases de datos:
+
+```javascript
+show dbs;
+```
+
 1. Crear una base de datos:
 
 ```javascript
@@ -58,6 +77,12 @@ use nombre_de_la_base_de_datos;
 ```
 
 2. Crear una colección e insertar un documento:
+
+* ver lista de colecciones:
+```javascript
+show collections;
+```
+
 
 ```javascript
 db.nombre_de_la_coleccion.insertOne({ campo1: 'valor1', campo2: 'valor2' });
