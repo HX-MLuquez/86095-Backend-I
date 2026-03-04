@@ -83,6 +83,11 @@ use nombre_de_la_base_de_datos;
 show collections;
 ```
 
+* Crear colección e insertar documento:
+```javascript
+db.createCollection("nombre_de_la_coleccion");
+```
+
 
 ```javascript
 db.nombre_de_la_coleccion.insertOne({ campo1: 'valor1', campo2: 'valor2' });
