@@ -242,22 +242,24 @@ db.usuarios.updateMany(
 
 ### DELETE - Eliminar documentos en las colecciones
 
-Que en la práctica, en la realidad los datos no se eliminan, sino que se marcan como eliminados, para no perder la trazabilidad de los datos. Se banean, se desactivan, se eliminan lógicamente (soft delete), pero no se eliminan físicamente. 
+Que en la práctica, en la realidad los datos no se eliminan, sino que se marcan como eliminados, para no perder la trazabilidad de los datos. Se banean, se desactivan, se eliminan lógicamente (soft delete), pero no se eliminan físicamente.
 
 - Crear una nueva colección usuarios_pro:
 
 usuarios_pro
-  - id
-  - nombre_completo
-  - email
-  - contraseña
-  - fecha_de_nacimiento
-  - amigos (array de ids de usuarios)
-  - activo (boolean)
+
+- id
+- nombre_completo
+- email
+- contraseña
+- fecha_de_nacimiento
+- amigos (array de ids de usuarios)
+- activo (boolean)
 
 ```bash
 db.createCollection("usuarios_pro");
 ```
+
 - Insertar un usuario en la colección usuarios_pro:
 
 ```bash
@@ -317,7 +319,8 @@ db.usuarios_pro.updateOne(
 db.usuarios_pro.find({ activo: true });
 ```
 
-#### Ejemplo usando DELETE 
+#### Ejemplo usando DELETE
+
 - para eliminar un usuario:
 
 ```bash
@@ -329,3 +332,68 @@ db.usuarios_pro.deleteOne({ email: "carla.martinez@example.com" });
 ```bash
 db.usuarios_pro.deleteMany({ fecha_de_nacimiento: { $gt: new Date("1990-01-01") } });
 ```
+
+### PROYECCIONES - Proyectar campos específicos de los documentos
+
+- Proyectar solo el nombre completo y el email de los usuarios:
+
+```bash
+db.usuarios.find({}, { nombre_completo: 1, email: 1, _id: 0 });
+```
+
+- Proyectar solo la descripción de las publicaciones de un usuario específico:
+
+```bash
+db.publicaciones.find({id_usuario: ObjectId("69aeb75c2c79a66c33228fb9")}, { descripcion: 1, _id: 0 });
+```
+
+### SORT - Ordenar los resultados de las consultas
+
+- Ordenar los usuarios por fecha de nacimiento de forma ascendente:
+
+```bash
+db.usuarios.find().sort({ fecha_de_nacimiento: 1 });
+```
+
+- Ordenar los usuarios por el nombre completo de forma descendente:
+
+```bash
+db.usuarios.find().sort({ nombre_completo: -1 });
+```
+
+### LIMIT - Limitar el número de resultados de las consultas
+
+- Limitar a 2 el número de usuarios que se muestran:
+
+```bash
+db.usuarios.find().limit(2);
+```
+
+### SKIP - Omitir un número específico de resultados en las consultas
+
+- Omitir los primeros 2 usuarios y mostrar el resto:
+
+```bash
+db.usuarios.find().skip(2);
+```
+
+---
+
+### SORT + LIMIT + SKIP - Combinar ordenamiento, limitación y omisión en las consultas
+
+- Ordenar los usuarios por fecha de nacimiento de forma ascendente, omitir los primeros 2 y limitar a 3 el número de usuarios que se muestran:
+
+```bash
+db.usuarios.find().sort({ fecha_de_nacimiento: 1 }).skip(2).limit(3);
+```
+
+lista-original = [{nombre: "Juan", edad: 30}, {nombre: "Ana", edad: 25}, {nombre: "Luis", edad: 35}, {nombre: "Carla", edad: 28}, {nombre: "María", edad: 22}]
+
+1. Ordena
+   lista-ordenada = lista-original.sort((a, b) => a.edad - b.edad) -> [{nombre: "María", edad: 22}, {nombre: "Ana", edad: 25}, {nombre: "Carla", edad: 28}, {nombre: "Juan", edad: 30}, {nombre: "Luis", edad: 35}]
+
+2. Omitir los primeros 2
+   lista-omitida = lista-ordenada.slice(2) -> [{nombre: "Carla", edad: 28}, {nombre: "Juan", edad: 30}, {nombre: "Luis", edad: 35}]
+
+3. Limitar a 3 el número de usuarios que se muestran
+   lista-limitada = lista-omitida.slice(0, 3) -> [{nombre: "Carla", edad: 28}, {nombre: "Juan", edad: 30}, {nombre: "Luis", edad: 35}]

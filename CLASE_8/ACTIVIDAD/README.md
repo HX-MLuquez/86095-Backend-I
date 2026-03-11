@@ -31,3 +31,16 @@ Nos ayuda a modelar los datos de la base de datos no sql cual si fuesen objetos 
 5. service userService: lógica de negocio -> DAO userDao
 6. dao userDao: interacción con la base de datos -> Model User
 7. model userModel: esquema y modelo de datos -> MongoDB Atlas (base de datos no sql) Collection users
+
+
+### Dependencias:
+- express: framework para construir el servidor y manejar rutas.
+- mongoose: ODM para conectar y trabajar con MongoDB.
+- dotenv: para cargar variables de entorno desde un archivo .env.
+- nodemon: herramienta de desarrollo para reiniciar automáticamente el servidor cuando se detectan cambios en el código.
+- body-parser: middleware para parsear el cuerpo de las solicitudes HTTP (aunque en versiones recientes de Express, esta funcionalidad está integrada).
+- cors: middleware para habilitar CORS (Cross-Origin Resource Sharing) y permitir solicitudes desde diferentes dominios.
+- handlebars: motor de plantillas para renderizar vistas dinámicas (opcional, dependiendo de si se necesita renderizar vistas en el proyecto).
+- method-override: middleware para soportar métodos HTTP como PUT y DELETE en formularios HTML (opcional, dependiendo de las necesidades del proyecto).
+
+

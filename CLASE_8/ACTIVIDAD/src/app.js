@@ -1,5 +1,7 @@
 const express = require("express");
 const path = require("path");
+const methodOverride = require("method-override");
+const { engine } = require("express-handlebars");
 
 //* MONGOOSE */ IMPORTAMOS MONGOOSE
 const mongoose = require("mongoose");
@@ -11,6 +13,7 @@ const logger = require("morgan");
 const config = require("./config");
 
 const routes = require("./routes/index");
+const productViewRoutes = require("./routes/productViewRoutes");
 
 const app = express();
 
@@ -44,6 +47,17 @@ mongoose
 app.use(logger("dev"));
 app.use(express.json()); // <- {} <- data en formato JSON por BODY
 app.use(express.urlencoded({ extended: true })); // FORM <- {}
+app.use(methodOverride("_method"));
+
+app.engine(
+  "handlebars",
+  engine({
+    defaultLayout: "main",
+    layoutsDir: path.join(__dirname, "views", "layouts"),
+  })
+);
+app.set("view engine", "handlebars");
+app.set("views", path.join(__dirname, "views"));
 
 // Configurar la carpeta 'public' para servir archivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
@@ -52,6 +66,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/files", express.static(path.join(__dirname, "files")));
 
 app.use("/api", routes);
+app.use("/products", productViewRoutes);
 
 // app.get("/", (req, res) => {
 //   res.send("Hola mundo");
@@ -60,41 +75,7 @@ app.use("/api", routes);
 // Implementar en '/' una vista html con estilos incluidos y un bttn que redirija a '/api' que brinda la lista de todos los usuarios
 
 app.get("/", (req, res) => {
-  try {
-    const styles = `
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        margin-top: 50px;
-      }
-      button {
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-      }
-    </style>
-  `;
-    const html = `
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Inicio</title>
-      ${styles}
-    </head>
-    <body>
-      <h1>Bienvenido a la API de Usuarios</h1>
-      <button onclick="window.location.href='/api/users'">Ver Usuarios</button>
-    </body>
-    </html>
-  `;
-    res.send(html);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error al cargar la página");
-  }
+  res.redirect("/products");
 });
 
 module.exports = app;
