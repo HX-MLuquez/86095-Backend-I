@@ -10,7 +10,7 @@ const productSchema = new mongoose.Schema(
     description: {
       type: String,
       trim: true,
-      default: "",
+      default: "No se proporcionó descripción",
     },
     price: {
       type: Number,
@@ -41,3 +41,9 @@ const productSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("Product", productSchema);
+
+/*
+
+-> se crea o se conecta  a la colección -> 'products' (pluralización automática de mongoose)
+
+*/

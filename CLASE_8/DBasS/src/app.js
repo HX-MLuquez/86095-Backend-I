@@ -12,6 +12,14 @@ console.log("SECRET_KEY:", SECRET_KEY);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+/*
+
+user name db cluster -> pepe_db_user 
+password -> 12345678 
+
+mongodb+srv://pepe_db_user:12345678@cluster01.aolpvws.mongodb.net/pipi?appName=Cluster01
+*/
+
 //* Conexión a la DB aquí
 mongoose
   .connect(MONGO_URI)
@@ -48,8 +56,14 @@ app.get("/", (req, res) => {
 app.post("/users", async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
     const newUser = new User({ name, email, password });
     await newUser.save();
+    if (newUser.password.length < 8) {
+      return res.status(400).json({ error: "Password must be at least 8 characters long" });
+    }
     res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ error: "Failed to create user" });

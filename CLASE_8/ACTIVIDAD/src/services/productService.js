@@ -35,7 +35,11 @@ class ProductService {
   }
 
   async getAllProducts(options = {}) {
-    return productDao.getAllProducts(options);
+    const results = await productDao.getAllProducts(options);
+    if (results.length === 0) {
+      throw new Error("No se encontraron productos");
+    }
+    return results;
   }
 
   async getProductById(id) {
