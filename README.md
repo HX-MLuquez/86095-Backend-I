@@ -1,7 +1,7 @@
 # Programación Backend I: Desarrollo Avanzado de Backend - Carreras Intensivas
 
 - Comisión 86095 - Lunes y Miércoles de 07:30 a 10:00 hs
-
+. oki
 ## Presentación
 
 - Donde son
