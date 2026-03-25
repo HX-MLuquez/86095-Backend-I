@@ -1,7 +1,7 @@
 # 📦 PROYECTO FINAL - BACKEND I
 
-
 # Entrega 1 - Lógica de datos (API) | Entrega 2 - Generar las vistas | Entrega final - DB persistente
+
 ---
 
 ## 🚀 Entrega N.º 1 – API con FileSystem
@@ -17,7 +17,6 @@ Desarrollar un servidor que gestione productos y carritos utilizando archivos (`
 - Servidor en **Node.js** con **Express**
 - Escucha en puerto `3000` u `8080`
 - Dos grupos de rutas:
-
   - `/api/products`
   - `/api/carts`
 
@@ -204,28 +203,27 @@ Agregar un sistema visual con **Handlebars** y **actualización en tiempo real**
 
 ---
 
-
 ---
 
+API /api/products - http
+API /api/carts - http
 
-API  /api/products  - http
-API  /api/carts - http
+Views /products - socket
+Views /products/:pid - socket
+Views /carts/:cid - socket
 
-Views  /products   - socket
-Views  /products/:pid - socket
-Views  /carts/:cid - socket
-
-
-# Temas según cada ENTREGA 
+# Temas según cada ENTREGA
 
 ## Entrega 1 - API con FileSystem
+
 - Node.js + Express
 - FileSystem (fs) (asyn/await)
 - Rutas y Routers
 - CRUD básico
-- Estructura de proyecto básica 
+- Estructura de proyecto básica
 
 ## Entrega 2 - Websockets + Handlebars - APP (Aplicación completa)
+
 - Handlebars (plantillas, vistas)
 - WebSockets (Socket.IO)
 - Integración Handlebars + WebSockets + Express
@@ -236,6 +234,7 @@ Views  /carts/:cid - socket
 - .env
 
 ## Entrega Final - MongoDB + Funciones Avanzadas - TENEMOS un APP + API con Base de Datos persistente
+
 - MongoDB + Mongoose (conexión, schemas, modelos)
   - Utilizar MongoDB Atlas
   - Implementar async/await
@@ -245,25 +244,250 @@ Views  /carts/:cid - socket
 - Nuevas vistas conectadas a la base de datos
 - README con instrucciones de uso
 
-
-Ejemplo: 
+Ejemplo:
 
 ```js
-
-const findByIdWithPopulate = async (req,res)=>{
-  const {cid} = req.params;
-  try{
-    if(!isValidObjectId(cid)){
-      return res.status(400).json({status: 'error', message: 'Invalid cart ID'});
+const findByIdWithPopulate = async (req, res) => {
+  const { cid } = req.params;
+  try {
+    if (!isValidObjectId(cid)) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "Invalid cart ID" });
     }
-    const cart = await CartModel.findById(cid).populate('products.product');
-    if(!cart){
-      return res.status(404).json({status: 'error', message: 'Cart not found'});
+    const cart = await CartModel.findById(cid).populate("products.product");
+    if (!cart) {
+      return res
+        .status(404)
+        .json({ status: "error", message: "Cart not found" });
     }
-    res.json({status: 'success', payload: cart});
-  }catch(error){
-    res.status(500).json({status: 'error', message: error.message});
+    res.json({ status: "success", payload: cart });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: error.message });
   }
+};
+```
 
+---
+
+---
+
+---
+
+---
+
+# 📦 Entrega Final
+
+## 🎯 Objetivos Generales
+
+- Utilizar **MongoDB** como sistema de persistencia principal.
+- Tener definidos todos los endpoints para trabajar con:
+  - Productos
+  - Carritos
+
+---
+
+## 🎯 Objetivos Específicos
+
+- Profesionalizar las consultas de productos:
+  - Filtros
+  - Paginación
+  - Ordenamientos
+
+- Mejorar la gestión de carritos aplicando los últimos conceptos vistos.
+
+---
+
+## 📁 Formato de Entrega
+
+- Link al repositorio de **GitHub**
+- **Excluir la carpeta `node_modules`**
+
+---
+
+## 💡 Sugerencias
+
+- Permitir comentarios en el código.
+- Mantener la lógica de negocio actual:
+  - Solo debe cambiar la **persistencia**.
+
+- Los nuevos endpoints deben seguir la misma estructura ya utilizada.
+
+---
+
+## 🎥 Video de referencia
+
+[https://drive.google.com/file/d/1nQUXoZ7Oq0uGukaE13PL-E6dM77KjwNv/view?usp=sharing](https://drive.google.com/file/d/1nQUXoZ7Oq0uGukaE13PL-E6dM77KjwNv/view?usp=sharing)
+
+---
+
+# 🛍️ Productos
+
+## 🔧 Modificación del endpoint GET `/`
+
+Debe aceptar los siguientes **query params**:
+
+### Parámetros:
+
+- `limit` (opcional)
+  - Cantidad de productos a devolver
+  - Default: **10**
+
+- `page` (opcional)
+  - Página a consultar
+  - Default: **1**
+
+- `query` (opcional)
+  - Filtro de búsqueda (ej: categoría o disponibilidad)
+  - Si no se envía → búsqueda general
+
+- `sort` (opcional)
+  - Ordenamiento por precio:
+    - `asc` → ascendente
+    - `desc` → descendente
+
+  - Si no se envía → sin ordenamiento
+
+---
+
+## 📤 Formato de Respuesta
+
+El endpoint debe devolver:
+
+```json
+{
+  "status": "success/error",
+  "payload": [],
+  "totalPages": 0,
+  "prevPage": 0,
+  "nextPage": 0,
+  "page": 0,
+  "hasPrevPage": true,
+  "hasNextPage": true,
+  "prevLink": null,
+  "nextLink": null
 }
 ```
+
+---
+
+## 🔍 Funcionalidades requeridas
+
+- Buscar productos por:
+  - Categoría
+  - Disponibilidad
+
+- Ordenar productos por precio:
+  - Ascendente
+  - Descendente
+
+---
+
+# 🛒 Carritos
+
+## 🔧 Nuevos Endpoints
+
+### 📌 Eliminar un producto del carrito
+
+```
+DELETE /api/carts/:cid/products/:pid
+```
+
+---
+
+### 📌 Actualizar todos los productos del carrito
+
+```
+PUT /api/carts/:cid
+```
+
+- Recibe un array de productos
+
+---
+
+### 📌 Actualizar cantidad de un producto específico
+
+```
+PUT /api/carts/:cid/products/:pid
+```
+
+- Solo modifica la cantidad (`quantity`)
+- Se recibe desde `req.body`
+
+---
+
+### 📌 Vaciar carrito completo
+
+```
+DELETE /api/carts/:cid
+```
+
+---
+
+## 🔗 Relación con Productos
+
+- En el modelo `Cart`, dentro de `products`:
+  - Guardar solo el **ID del producto**
+  - Referenciar al modelo de **Products**
+
+---
+
+## ⚡ Populate
+
+- Modificar la ruta:
+
+```
+GET /api/carts/:cid
+```
+
+- Debe usar **populate** para traer:
+  - Los productos completos (no solo IDs)
+
+---
+
+# 🖥️ Vistas (Handlebars)
+
+## 📄 `/products`
+
+Modificar `index.handlebars` para:
+
+- Mostrar todos los productos
+- Implementar paginación
+
+---
+
+## 🧩 Opciones para cada producto
+
+### Opción 1:
+
+- Redirigir a una vista de detalle:
+
+```
+/products/:pid
+```
+
+- Mostrar:
+  - Descripción completa
+  - Precio
+  - Categoría
+
+- Botón:
+  - **Agregar al carrito**
+
+---
+
+### Opción 2:
+
+- Botón de **Agregar al carrito** directamente en el listado
+- Sin necesidad de ir al detalle
+
+---
+
+## 🛒 Vista de carrito
+
+### 📄 `/carts/:cid`
+
+- Mostrar un carrito específico
+- Listar **solo los productos de ese carrito**
+
+---

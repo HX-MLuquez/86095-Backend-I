@@ -111,7 +111,16 @@ user.courses [{_id:1, course: 1234}, {_id:1, course: 1222}]
 }
 
 
+* Con Populate Middleware, el resultado sería:
 
+{
+  first_name: "Lucas",
+  last_name: "Lopez",
+  email: "...",
+  telephone: 1234,
+  age: 123,
+  courses: [{_id:1, course: {name: "Math", description: "Math course", duration: 40}}]
+}
 
 */
 
